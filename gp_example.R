@@ -1,9 +1,11 @@
+set.seed(1)
+
 library(MASS) # for mvrnorm
 
 
-l = 100      # length of time series
-KK = 300     # carrying capacity ("K" is for kernel below)
-r = 1.6      # population growth rate
+l = 50      # length of time series
+KK = 500     # carrying capacity ("K" is for kernel below)
+r = 1.8      # population growth rate
 
 # Simulate time series
 n = integer(l)
@@ -35,7 +37,7 @@ y = c(0, d[[2]]) - mean(d[[2]])
 x_seq = seq(0, max(d) * 1.2, length = 1000)
 
 process_noise = 100  # populations can fluctuate this much for non-density reasons
-lengthscale = max(d) * 5   # Very smooth function: values should be similar across a broad range
+lengthscale = max(d) * 2   # Very smooth function: values should be similar across a broad range
 sigma_f = 1E9        # very flat prior: function can go anywhere.
 
 ## Squared exponential kernel
@@ -81,9 +83,9 @@ plot(
   xaxs = "i", 
   yaxs = "i", 
   col = "#0000C0",
-  lwd = 2,
+  lwd = 3,
   cex = 2,
-  main = "Density dependence:\n 250 curves from posterior + \"truth\""
+  main = "Density dependence:\n 250 curves from posterior + \"truth\" in red"
 )
 # Spaghetti lines showing possible density dependence curves
 matplot(
@@ -92,7 +94,7 @@ matplot(
   type = "l",
   lty = 1,
   add = TRUE,
-  col = "#00000040",
+  col = "#00000030",
   lwd = 1
 )
 # "True" relationship in red
@@ -105,11 +107,12 @@ curve(
   to = max(x_seq)
 )
 
+
 # Plot 3
-slopes = (sample_curves[851, ] - sample_curves[850, ]) / (x_seq[851] - x_seq[850])
+slopes = (sample_curves[831, ] - sample_curves[830, ]) / (x_seq[831] - x_seq[830])
 plot(
   density(slopes),
-  xlab = paste("slope at at N =", round(mean(x_seq[850:851]))),
-  main = paste("Posterior for slope at N =", round(mean(x_seq[850:851])))
+  xlab = paste("slope at at N =", round(mean(x_seq[830:831]))),
+  main = paste("Posterior for slope at N =", round(mean(x_seq[830:831])))
 )
 abline(v = 0, col = 2, lwd = 2)
