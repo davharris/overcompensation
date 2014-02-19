@@ -19,9 +19,6 @@ for(i in 1:(l - 1)){
 }
 
 d = data.frame(n_t = n[-l], n_t_plus_one = n[-1])
-# plot the time series
-
-
 
 
 # Gaussian process regression ---------------------------------------------
@@ -46,10 +43,10 @@ SE <- function(Xi,Xj, l=lengthscale) sigma_f * exp(-0.5 * (Xi - Xj)^2 / lengthsc
 covar <- function(X, Y) outer(X, Y, SE, lengthscale) 
 K <- covar(x, x)
 I <-  diag(1, length(x))
-I[1, 1] = 1E-5 # No process noise for fact that curve goes though (0,0)
+I[1, 1] = 1E-5 # No process noise for the *fact* that curve goes though (0,0)
 K_altered = K + process_noise ^ 2 * I
 
-# Cholesky decomposition method
+# Cholesky decomposition method for GP regression
 L <- t(chol(K_altered))
 alpha <- solve(t(L), solve(L, y))
 k_star <- covar(x, x_seq)
