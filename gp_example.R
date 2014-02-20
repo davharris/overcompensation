@@ -38,10 +38,10 @@ x_seq = seq(0, max(d) * 1.2, length = 1000)
 
 process_noise = 100  # populations can fluctuate this much for non-density reasons
 lengthscale = max(d) * 2   # Very smooth function: values should be similar across a broad range
-sigma_f = 1E9        # very flat prior: function can go anywhere.
+sigma_f = 1E5        # very flat prior: function can go anywhere.
 
 ## Squared exponential kernel
-SE <- function(Xi,Xj, l=lengthscale) sigma_f * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
+SE <- function(Xi,Xj, l=lengthscale) sigma_f^2 * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
 covar <- function(X, Y) outer(X, Y, SE, lengthscale) 
 K <- covar(x, x)
 I <-  diag(1, length(x))
