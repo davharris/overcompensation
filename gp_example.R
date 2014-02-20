@@ -35,7 +35,7 @@ d = data.frame(n_t = n[-l], n_t_plus_one = n[-1])
 # Pull out the data from the data frame
 # Add (0,0) as a "data" point: extinction is forever
 x = c(0, d[[1]])
-y = c(0, d[[2]]) - mean(d[[2]])
+y = c(0, d[[2]]) - mean(d[[2]]) # y is scaled to be mean zero
 
 # Tuning parameters for the GP
 process_noise = 100  # sigma_n: populations can fluctuate this much for non-density reasons
@@ -63,7 +63,7 @@ alpha <- solve(t(L), solve(L, y))
 k_star <- covar(x, x_seq)
 
 
-mu <- t(k_star) %*% alpha + mean(d[[2]]) # Expected values along x_seq
+mu <- t(k_star) %*% alpha + mean(d[[2]]) # Expected values along x_seq; note that the mean is added back in.
 v <- solve(L, k_star)
 var <- covar(x_seq,x_seq) - t(v) %*% v # Correlated uncertainty along x_seq
 
