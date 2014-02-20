@@ -28,8 +28,9 @@ d = data.frame(n_t = n[-l], n_t_plus_one = n[-1])
 # Code based on Carl Boettiger's Cholesky method
 # https://github.com/cboettig/nonparametric-bayes/blob/master/R/gp_fit.R
 
-# Notation & algorithm roughly follows Rasmussen and Williams
+# Notation & algorithm mostly follow Rasmussen and Williams
 # http://www.gaussianprocess.org/gpml/chapters/
+# See especially Chapter 2 and Algorithm 2.1
 
 # Pull out the data from the data frame
 # Add (0,0) as a "data" point: extinction is forever
