@@ -125,6 +125,8 @@ plot(
     "Posterior for slope at N =", 
     round(mean(x_seq[830:831])),
     "\n (near highest observed value)"
-  )
+  ), 
+  yaxs = "i"
 )
 abline(v = 0, col = 2, lwd = 2)
+rug(slopes)
