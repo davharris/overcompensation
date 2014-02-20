@@ -28,21 +28,26 @@ d = data.frame(n_t = n[-l], n_t_plus_one = n[-1])
 # Code based on Carl Boettiger's Cholesky method
 # https://github.com/cboettig/nonparametric-bayes/blob/master/R/gp_fit.R
 
+# Notation & algorithm roughly follows Rasmussen and Williams
+# http://www.gaussianprocess.org/gpml/chapters/
+
 # Pull out the data from the data frame
 # Add (0,0) as a "data" point: extinction is forever
 x = c(0, d[[1]])
 y = c(0, d[[2]]) - mean(d[[2]])
 
 # Tuning parameters for the GP
-process_noise = 100  # populations can fluctuate this much for non-density reasons
+process_noise = 100  # sigma_n: populations can fluctuate this much for non-density reasons
 lengthscale = sd(y) * 10   # smoothness of the learned functions
-sigma_f = 1E5        # very flat prior: function can go anywhere eventually.
+sigma_f = 1E5        # Function variance is very high: function can go anywhere eventually.
 
 # Range of values to plot
 x_seq = seq(0, max(d) * 1.2, length = 1000)
 
 ## Squared exponential kernel
-SE <- function(Xi,Xj, l=lengthscale) sigma_f^2 * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
+SE <- function(Xi,Xj, l=lengthscale){
+  sigma_f^2 * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
+}
 covar <- function(X, Y) outer(X, Y, SE, lengthscale) 
 K <- covar(x, x)
 
