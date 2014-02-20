@@ -9,7 +9,7 @@ r = 1.8      # population growth rate
 
 # Simulate time series
 n = integer(l)
-n[1] = KK
+n[1] = KK # Initialize the population at carrying capacity
 for(i in 1:(l - 1)){
   expected = n[i] + r * n[i] * (1 - n[i] / KK)
   expected.plus.noise = if(expected == 0){
@@ -44,6 +44,8 @@ sigma_f = 1E5        # very flat prior: function can go anywhere.
 SE <- function(Xi,Xj, l=lengthscale) sigma_f^2 * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
 covar <- function(X, Y) outer(X, Y, SE, lengthscale) 
 K <- covar(x, x)
+
+# Add process noise along kernel's diagonal
 I <-  diag(1, length(x))
 I[1, 1] = 1E-5 # No process noise for the *fact* that curve goes though (0,0)
 K_altered = K + process_noise ^ 2 * I
