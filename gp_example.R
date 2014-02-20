@@ -28,17 +28,18 @@ d = data.frame(n_t = n[-l], n_t_plus_one = n[-1])
 # Code based on Carl Boettiger's Cholesky method
 # https://github.com/cboettig/nonparametric-bayes/blob/master/R/gp_fit.R
 
-
+# Pull out the data from the data frame
 # Add (0,0) as a "data" point: extinction is forever
 x = c(0, d[[1]])
 y = c(0, d[[2]]) - mean(d[[2]])
 
+# Tuning parameters for the GP
+process_noise = 100  # populations can fluctuate this much for non-density reasons
+lengthscale = sd(y) * 10   # smoothness of the learned functions
+sigma_f = 1E5        # very flat prior: function can go anywhere eventually.
+
 # Range of values to plot
 x_seq = seq(0, max(d) * 1.2, length = 1000)
-
-process_noise = 100  # populations can fluctuate this much for non-density reasons
-lengthscale = max(d) * 2   # Very smooth function: values should be similar across a broad range
-sigma_f = 1E5        # very flat prior: function can go anywhere.
 
 ## Squared exponential kernel
 SE <- function(Xi,Xj, l=lengthscale) sigma_f^2 * exp(-0.5 * (Xi - Xj)^2 / lengthscale^2)
@@ -75,6 +76,7 @@ par(mfrow = c(1, 3))
 
 # Plot 1
 plot(n, type = "o", xlab = "time", cex = .5, pch = 16, main = "Time series")
+abline(h = KK, col = "#00000050", lty = 2, lwd = 2)
 
 # Plot 2
 plot(
@@ -109,12 +111,15 @@ curve(
   to = max(x_seq)
 )
 
-
 # Plot 3
 slopes = (sample_curves[831, ] - sample_curves[830, ]) / (x_seq[831] - x_seq[830])
 plot(
   density(slopes),
   xlab = paste("slope at at N =", round(mean(x_seq[830:831]))),
-  main = paste("Posterior for slope at N =", round(mean(x_seq[830:831])))
+  main = paste(
+    "Posterior for slope at N =", 
+    round(mean(x_seq[830:831])),
+    "\n (near highest observed value)"
+  )
 )
 abline(v = 0, col = 2, lwd = 2)
