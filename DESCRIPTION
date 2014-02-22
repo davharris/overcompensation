@@ -1,7 +1,7 @@
 Package: overcompensation
 Title: Evaluating overcompensating density dependence
 Version: 0.1
-Authors: Population Biology Graduate Group
+Authors: UC Davis Center for Population Biology
 Maintainer: David J. Harris <davharris@ucdavis.edu>
 Description: 
 Depends:
