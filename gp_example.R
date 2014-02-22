@@ -4,10 +4,45 @@ source("inst/fake_logistic.R") # simulate fake data
 
 # Gaussian process regression ---------------------------------------------
 
-gp = gp_dynamics(
-  N_t = d[[1]],
-  N_t_plus_1 = d[[2]]
+
+# Optimize hyperparameters:
+#   * sigma_n: populations can fluctuate this much for non-density reasons
+#   * lengthscale: determines the smoothness of the learned functions
+#   * sigma_f: determines how far curves stray from the grand mean.
+# The real project should sample from the whole posterior distribution of these
+opt = optim(
+  par = c(
+    process_noise = sd(c(0, d[[2]])),                
+    lengthscale = sd(d[[1]]), 
+    sigma_f = sd(c(0, d[[2]]))
+  ),
+  fn = function(par){
+    gp = gp_dynamics(
+      N_t = d[[1]],
+      N_t_plus_1 = d[[2]],
+      process_noise = par["process_noise"],
+      lengthscale = par["lengthscale"],
+      sigma_f = par["sigma_f"],
+      predict = FALSE
+    )
+    -gp$loglik
+  }
 )
+
+gp = with(
+  as.list(opt$par),
+  gp_dynamics(
+    N_t = d[[1]],
+    N_t_plus_1 = d[[2]],
+    process_noise = process_noise,
+    lengthscale = lengthscale,
+    sigma_f = sigma_f,
+    predict = TRUE,
+    test_values = seq(0, 1001, length = 1000)
+  )
+)
+
+
 # Examples of possible density dependence relationships from model's posterior
 sample_curves = with(
   gp,
@@ -55,15 +90,21 @@ curve(
   from = 0, 
   to = max(gp$test_values)
 )
+test_point = which.min(abs(gp$test_values - max(d)))
+abline(v = gp$test_values[c(test_point, test_point - 1)], lty = 2)
+
 
 # Plot 3
-slopes = (sample_curves[831, ] - sample_curves[830, ]) / (gp$test_values[831] - gp$test_values[830])
+rises = sample_curves[test_point, ] - sample_curves[(test_point - 1), ]
+run = gp$test_values[test_point] - gp$test_values[test_point - 1]
+slopes = rises / run
+
 plot(
-  density(slopes),
-  xlab = paste("slope at at N =", round(mean(gp$test_values[830:831]))),
+  density(slopes, to = 1),
+  xlab = paste("slope at at N =", round(mean(gp$test_values[test_point]))),
   main = paste(
     "Posterior for slope at N =", 
-    round(mean(gp$test_values[830:831])),
+    round(mean(gp$test_values[c(test_point - 1, test_point)])),
     "\n (near highest observed value)"
   ), 
   yaxs = "i"

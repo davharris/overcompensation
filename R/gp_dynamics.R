@@ -1,6 +1,6 @@
 # sigma_n: populations can fluctuate this much for non-density reasons
-# smoothness of the learned functions
-# Function variance is very high: function can go anywhere eventually.
+# lengthscale: determines the smoothness of the learned functions
+# sigma_f: determines how far curves stray from the grand mean.
 gp_dynamics = function(
   N_t, 
   N_t_plus_1, 
