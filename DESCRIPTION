@@ -1,0 +1,10 @@
+Package: overcompensation
+Title: Evaluating overcompensating density dependence
+Version: 0.1
+Authors: Population Biology Graduate Group
+Maintainer: David J. Harris <davharris@ucdavis.edu>
+Description: 
+Depends:
+    R (>= 3.0.2)
+License: MIT
+Suggests: devtools, testthat
