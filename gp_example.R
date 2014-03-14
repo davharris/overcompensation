@@ -1,18 +1,18 @@
 library(devtools)
 load_all()
 source("inst/fake_logistic.R") # simulate fake data
+set.seed(1)
+
 
 pdf("example.pdf", width = 6, height = 2, pointsize = 6)
 
 # Gaussian process regression ---------------------------------------------
 
 
-# Optimize hyperparameters:
+# Optimize three hyperparameters:
 #   * sigma_n: populations can fluctuate this much for non-density reasons
 #   * lengthscale: determines the smoothness of the learned functions
 #   * sigma_f: determines how far curves stray from the grand mean.
-# The real project should sample from the whole posterior distribution of these
-#    rather than relying on point estimates
 opt = optim(
   par = c(
     process_noise = sd(c(0, d[[2]])),                
